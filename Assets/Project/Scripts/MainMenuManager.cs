@@ -13,9 +13,19 @@ namespace Connect.Core
         [SerializeField] private GameObject _stagePanel;
         [SerializeField] private GameObject _levelPanel;
 
+        [SerializeField] private Image musicButton;
+        [SerializeField] private Sprite musicOnSprite;
+        [SerializeField] private Sprite musicOffSprite;
+
+        [SerializeField] private Image soundButton;
+        [SerializeField] private Sprite soundOnSprite;
+        [SerializeField] private Sprite soundOffSprite;
+
         private void Awake()
         {
             Instance = this;
+
+            SetSprites();
 
             _titlePanel.SetActive(true);
             _stagePanel.SetActive(false);
@@ -38,6 +48,53 @@ namespace Connect.Core
         {
             _stagePanel.SetActive(true);
             _levelPanel.SetActive(false);
+        }
+
+        public void Music()
+        {
+            if (PlayerPrefs.GetFloat("MusicVolume") == 1f)
+            {
+                AudioManager.instance.OffMusic();
+            }
+            else
+            {
+                AudioManager.instance.OnMusic();
+            }
+            SetSprites();
+        }
+
+        public void Sound()
+        {
+            if (PlayerPrefs.GetFloat("SoundVolume") == 1f)
+            {
+                AudioManager.instance.OffSound();
+            }
+            else
+            {
+                AudioManager.instance.OnSound();
+            }
+            SetSprites();
+        }
+
+        private void SetSprites()
+        {
+            if (PlayerPrefs.GetFloat("MusicVolume") == 1f)
+            {
+                musicButton.sprite = musicOnSprite;
+            }
+            else
+            {
+                musicButton.sprite = musicOffSprite;
+            }
+
+            if (PlayerPrefs.GetFloat("SoundVolume") == 1f)
+            {
+                soundButton.sprite = soundOnSprite;
+            }
+            else
+            {
+                soundButton.sprite = soundOffSprite;
+            }
         }
 
         public UnityAction LevelOpened;

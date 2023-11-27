@@ -218,6 +218,55 @@ namespace Connect.Core
                 _clickHighlight.gameObject.SetActive(false);
             }
 
+            if (Input.touches.Length > 0)
+            {
+                if (Input.touches[0].phase == TouchPhase.Began)
+                {
+                    startNode = null;
+                    _clickHighlight.gameObject.SetActive(false);
+                }
+                if (Input.touches[0].phase == TouchPhase.Moved)
+                {
+                    Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
+                    RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
+
+                    if (startNode == null)
+                    {
+                        if (hit && hit.collider.gameObject.TryGetComponent(out Node tNode)
+                            && tNode.IsClickable)
+                        {
+                            startNode = tNode;
+                            _clickHighlight.gameObject.SetActive(true);
+                            _clickHighlight.gameObject.transform.position = (Vector3)mousePos2D;
+                            _clickHighlight.color = GetHighLightColor(tNode.colorId);
+                        }
+
+                        return;
+                    }
+
+                    _clickHighlight.gameObject.transform.position = (Vector3)mousePos2D;
+
+                    if (hit && hit.collider.gameObject.TryGetComponent(out Node tempNode)
+                        && startNode != tempNode)
+                    {
+                        if (startNode.colorId != tempNode.colorId && tempNode.IsEndNode)
+                        {
+                            return;
+                        }
+
+                        startNode.UpdateInput(tempNode);
+                        CheckWin();
+                        startNode = null;
+                    }
+                }
+                if (Input.touches[0].phase == TouchPhase.Ended)
+                {
+                    startNode = null;
+                    return;
+                }
+            }
+
         }
 
         #endregion
@@ -242,6 +291,7 @@ namespace Connect.Core
                 }
             }
 
+            AudioManager.instance.Play("Win");
             GameManager.Instance.UnlockLevel();
 
             _winText.gameObject.SetActive(true);

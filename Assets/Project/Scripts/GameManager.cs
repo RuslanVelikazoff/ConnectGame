@@ -77,14 +77,7 @@ namespace Connect.Core
 
             if(CurrentLevel == 51)
             {
-                CurrentLevel = 1;
-                CurrentStage++;
-
-                if(CurrentStage == 8)
-                {
-                    CurrentStage = 1;
-                    GoToMainMenu();
-                }
+                GoToMainMenu();
             }
 
             string levelName = "Level" + CurrentStage.ToString() + CurrentLevel.ToString();
